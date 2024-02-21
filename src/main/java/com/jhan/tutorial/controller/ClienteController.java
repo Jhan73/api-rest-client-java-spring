@@ -10,11 +10,37 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1")//Se utiliza para asignar solicitudes web a clases de controlador y/o metodos de controlador
 public class ClienteController {
     @Autowired
     private ClienteInterface clienteService;
+
+    @GetMapping("/clientes")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Response> showAll(){
+        List<Cliente> clientes = clienteService.getAll();
+
+        if(clientes == null){
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje("No hay registros de clientes")
+                    .object(null)
+                    .status(HttpStatus.NOT_FOUND)
+                    .build()
+                    , HttpStatus.NOT_FOUND
+            );
+        } else{
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje("")
+                    .object(clientes)
+                    .status(HttpStatus.OK)
+                    .build()
+                    , HttpStatus.OK);
+        }
+
+    }
     @PostMapping("/cliente")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Response> create(@RequestBody ClienteDto clienteDto){

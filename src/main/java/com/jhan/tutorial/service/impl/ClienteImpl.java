@@ -8,10 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
-public class ClienteImpl implements ClienteInterface {
+public class ClienteImpl implements ClienteInterface { //el deginición del tipo de retorno y parametro depende del caso de uso
     @Autowired
     private ClienteDao clienteDao;
+
+    @Override
+    public List<Cliente> getAll() {
+        return (List<Cliente>) clienteDao.findAll();
+    }
+
     @Transactional //para manejar cietas excepciones por defecto para que no caiga la app
     @Override
     public Cliente save(ClienteDto clienteDto) {

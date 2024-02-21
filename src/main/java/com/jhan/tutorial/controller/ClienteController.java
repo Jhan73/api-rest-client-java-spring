@@ -2,6 +2,7 @@ package com.jhan.tutorial.controller;
 
 import com.jhan.tutorial.model.dto.ClienteDto;
 import com.jhan.tutorial.model.entity.Cliente;
+import com.jhan.tutorial.model.payload.Response;
 import com.jhan.tutorial.service.ClienteInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -52,16 +53,18 @@ public class ClienteController {
     //? significa cualquier objeto
     public ResponseEntity<?> delete(@PathVariable Integer id){//ResponseEntity maneja toda la respuesta HTTP incluyendo el cuerpo, cabecera y códigos de estado
                                                                     //permitiendo total libertad de configurar las respuesta que se quiere enviar por los endpoints
-        Map<String, Object> response = new HashMap<>();
         try {
             Cliente clienteDelete = clienteInterface.findById(id);
             clienteInterface.delete(clienteDelete);
 
             return new ResponseEntity<>(clienteDelete, HttpStatus.NO_CONTENT);
         } catch (DataAccessException e){
-            response.put("mensaje", e.getMessage());
-            response.put("Cliente", null);
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje(e.getMessage())
+                    .object(null)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build()
+                    , HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @GetMapping("/cliente/{id}")

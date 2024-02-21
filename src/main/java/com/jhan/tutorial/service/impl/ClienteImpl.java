@@ -35,4 +35,9 @@ public class ClienteImpl implements ClienteInterface {
     public void delete(Cliente cliente) {
         clienteDao.delete(cliente);
     }
+
+    @Override
+    public boolean existById(Integer id) {
+        return clienteDao.existsById(id);
+    }
 }

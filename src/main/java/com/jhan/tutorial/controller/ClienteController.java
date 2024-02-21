@@ -10,38 +10,80 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/v1")//Se utiliza para asignar solicitudes web a clases de controlador y/o metodos de controlador
 public class ClienteController {
     @Autowired
-    private ClienteInterface clienteInterface;
+    private ClienteInterface clienteService;
     @PostMapping("/cliente")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClienteDto create(@RequestBody ClienteDto clienteDto){
-        Cliente clienteSave = clienteInterface.save(clienteDto);
-        return ClienteDto.builder()
-                .id(clienteSave.getId())
-                .nombre(clienteSave.getNombre())
-                .apellido(clienteSave.getApellido())
-                .correo(clienteSave.getCorreo())
-                .fechaRegistro(clienteSave.getFechaRegistro())
-                .build();
+    public ResponseEntity<Response> create(@RequestBody ClienteDto clienteDto){
+        try {
+            Cliente clienteSave = clienteService.save(clienteDto);
+            clienteDto =  ClienteDto.builder()
+                    .id(clienteSave.getId())
+                    .nombre(clienteSave.getNombre())
+                    .apellido(clienteSave.getApellido())
+                    .correo(clienteSave.getCorreo())
+                    .fechaRegistro(clienteSave.getFechaRegistro())
+                    .build();
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje("Cliente guardado correctamente")
+                    .object(clienteDto)
+                    .status(HttpStatus.CREATED)
+                    .build()
+                    , HttpStatus.CREATED
+                    );
+        } catch (DataAccessException e){
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje(e.getMessage())
+                    .object(null)
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .build()
+                    , HttpStatus.METHOD_NOT_ALLOWED);
+        }
     }
-    @PutMapping("/cliente")
+    @PutMapping("/cliente/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClienteDto update(@RequestBody ClienteDto clienteDto){
+    public ResponseEntity<Response> update(@RequestBody ClienteDto clienteDto, @PathVariable Integer id){//se puede mejorar creando un metodo update en service
 
-        Cliente clienteUpdate =  clienteInterface.save(clienteDto);
-        return ClienteDto.builder()
-                .id(clienteUpdate.getId())
-                .nombre(clienteUpdate.getNombre())
-                .apellido(clienteUpdate.getApellido())
-                .correo(clienteUpdate.getCorreo())
-                .fechaRegistro(clienteUpdate.getFechaRegistro())
-                .build();
+        try {
+            if (clienteService.existById(id)){
+                clienteDto.setId(id);
+                Cliente clienteUpdate =  clienteService.save(clienteDto);
+                clienteDto = ClienteDto.builder()
+                        .id(clienteUpdate.getId())
+                        .nombre(clienteUpdate.getNombre())
+                        .apellido(clienteUpdate.getApellido())
+                        .correo(clienteUpdate.getCorreo())
+                        .fechaRegistro(clienteUpdate.getFechaRegistro())
+                        .build();
+                return new ResponseEntity<>(Response.builder()
+                        .mensaje("Cliente actualizado correctamente")
+                        .object(clienteDto)
+                        .status(HttpStatus.OK)
+                        .build()
+                        , HttpStatus.OK
+                );
+            } else {
+                return new ResponseEntity<>(Response.builder()
+                        .mensaje("El cliente no existe")
+                        .object(null)
+                        .status(HttpStatus.NOT_FOUND)
+                        .build()
+                        , HttpStatus.NOT_FOUND
+                );
+            }
+
+
+        } catch (DataAccessException e){
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje(e.getMessage())
+                    .object(null)
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .build()
+                    , HttpStatus.METHOD_NOT_ALLOWED);
+        }
     }
     /*@DeleteMapping("/cliente/{id}")//{id} debe coincidir con el nombre del parametro
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -51,13 +93,18 @@ public class ClienteController {
     }*/
     @DeleteMapping("/cliente/{id}")//{id} debe coincidir con el nombre del parametro
     //? significa cualquier objeto
-    public ResponseEntity<?> delete(@PathVariable Integer id){//ResponseEntity maneja toda la respuesta HTTP incluyendo el cuerpo, cabecera y códigos de estado
+    public ResponseEntity<Response> delete(@PathVariable Integer id){//ResponseEntity maneja toda la respuesta HTTP incluyendo el cuerpo, cabecera y códigos de estado
                                                                     //permitiendo total libertad de configurar las respuesta que se quiere enviar por los endpoints
         try {
-            Cliente clienteDelete = clienteInterface.findById(id);
-            clienteInterface.delete(clienteDelete);
+            Cliente clienteDelete = clienteService.findById(id);
+            clienteService.delete(clienteDelete);
 
-            return new ResponseEntity<>(clienteDelete, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje("Cliente eliminado correctamente")
+                    .object(clienteDelete)
+                    .status(HttpStatus.NO_CONTENT)
+                    .build()
+                    , HttpStatus.NO_CONTENT);
         } catch (DataAccessException e){
             return new ResponseEntity<>(Response.builder()
                     .mensaje(e.getMessage())
@@ -69,15 +116,31 @@ public class ClienteController {
     }
     @GetMapping("/cliente/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ClienteDto showById(@PathVariable Integer id){
-        Cliente cliente = clienteInterface.findById(id);
-        return ClienteDto.builder()
-                .id(cliente.getId())
-                .nombre(cliente.getNombre())
-                .apellido(cliente.getApellido())
-                .correo(cliente.getCorreo())
-                .fechaRegistro(cliente.getFechaRegistro())
-                .build();
+    public ResponseEntity<Response> showById(@PathVariable Integer id){
+        Cliente cliente = clienteService.findById(id);
+        if(cliente == null){
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje("El cliente no existe")
+                    .object(null)
+                    .status(HttpStatus.NOT_FOUND)
+                    .build()
+                    , HttpStatus.NOT_FOUND
+            );
+        } else{
+            ClienteDto clienteDto = ClienteDto.builder()
+                    .id(cliente.getId())
+                    .nombre(cliente.getNombre())
+                    .apellido(cliente.getApellido())
+                    .correo(cliente.getCorreo())
+                    .fechaRegistro(cliente.getFechaRegistro())
+                    .build();
+            return new ResponseEntity<>(Response.builder()
+                    .mensaje("")
+                    .object(clienteDto)
+                    .status(HttpStatus.OK)
+                    .build()
+                    , HttpStatus.OK);
+        }
 
     }
 

@@ -7,4 +7,5 @@ public interface ClienteInterface {
     Cliente save(ClienteDto clienteDto);
     Cliente findById(Integer id);
     void delete(Cliente cliente);
+    boolean existById(Integer id);
 }

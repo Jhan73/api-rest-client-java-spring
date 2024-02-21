@@ -1,5 +1,6 @@
 package com.jhan.tutorial.controller;
 
+import com.jhan.tutorial.model.dto.ClienteDto;
 import com.jhan.tutorial.model.entity.Cliente;
 import com.jhan.tutorial.service.ClienteInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,28 @@ public class ClienteController {
     private ClienteInterface clienteInterface;
     @PostMapping("/cliente")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente create(@RequestBody Cliente cliente){
-        return clienteInterface.save(cliente);
+    public ClienteDto create(@RequestBody ClienteDto clienteDto){
+        Cliente clienteSave = clienteInterface.save(clienteDto);
+        return ClienteDto.builder()
+                .id(clienteSave.getId())
+                .nombre(clienteSave.getNombre())
+                .apellido(clienteSave.getApellido())
+                .correo(clienteSave.getCorreo())
+                .fechaRegistro(clienteSave.getFechaRegistro())
+                .build();
     }
     @PutMapping("/cliente")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente update(@RequestBody Cliente cliente){
-        return clienteInterface.save(cliente);
+    public ClienteDto update(@RequestBody ClienteDto clienteDto){
+
+        Cliente clienteUpdate =  clienteInterface.save(clienteDto);
+        return ClienteDto.builder()
+                .id(clienteUpdate.getId())
+                .nombre(clienteUpdate.getNombre())
+                .apellido(clienteUpdate.getApellido())
+                .correo(clienteUpdate.getCorreo())
+                .fechaRegistro(clienteUpdate.getFechaRegistro())
+                .build();
     }
     /*@DeleteMapping("/cliente/{id}")//{id} debe coincidir con el nombre del parametro
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -50,8 +66,16 @@ public class ClienteController {
     }
     @GetMapping("/cliente/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Cliente showById(@PathVariable Integer id){
-        return clienteInterface.findById(id);
+    public ClienteDto showById(@PathVariable Integer id){
+        Cliente cliente = clienteInterface.findById(id);
+        return ClienteDto.builder()
+                .id(cliente.getId())
+                .nombre(cliente.getNombre())
+                .apellido(cliente.getApellido())
+                .correo(cliente.getCorreo())
+                .fechaRegistro(cliente.getFechaRegistro())
+                .build();
+
     }
 
 

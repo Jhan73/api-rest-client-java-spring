@@ -1,6 +1,9 @@
 package com.jhan.tutorial.model.dto;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,8 +15,13 @@ import java.util.Date;
 @Builder
 public class ClienteDto implements Serializable {
     private int id;
+    @Size(min = 2, max = 25)
+    @NotEmpty(message = "Nombre requerido")
     private String nombre;
+    @Size(min = 2, max = 25)
     private String apellido;
+    @Email
+    @NotEmpty(message = "Apellido requerido")
     private String correo;
     private Date fechaRegistro;
 }

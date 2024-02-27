@@ -5,6 +5,7 @@ import com.jhan.tutorial.model.dto.ClienteDto;
 import com.jhan.tutorial.model.entity.Cliente;
 import com.jhan.tutorial.model.payload.Response;
 import com.jhan.tutorial.service.ClienteInterface;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,7 @@ public class ClienteController {
     }
     @PostMapping("/cliente")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Response> create(@RequestBody ClienteDto clienteDto){
+    public ResponseEntity<Response> create(@RequestBody @Valid ClienteDto clienteDto){
         try {
             Cliente clienteSave = clienteService.save(clienteDto);
             clienteDto =  ClienteDto.builder()

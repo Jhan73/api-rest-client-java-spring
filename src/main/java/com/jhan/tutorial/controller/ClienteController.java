@@ -1,5 +1,6 @@
 package com.jhan.tutorial.controller;
 
+import com.jhan.tutorial.exception.ResourceNotFoundException;
 import com.jhan.tutorial.model.dto.ClienteDto;
 import com.jhan.tutorial.model.entity.Cliente;
 import com.jhan.tutorial.model.payload.Response;
@@ -23,14 +24,15 @@ public class ClienteController {
     public ResponseEntity<Response> showAll(){
         List<Cliente> clientes = clienteService.getAll();
 
-        if(clientes == null){
-            return new ResponseEntity<>(Response.builder()
+        if(clientes == null || clientes.isEmpty()){
+            throw new ResourceNotFoundException("Cliente");
+            /*return new ResponseEntity<>(Response.builder()
                     .mensaje("No hay registros de clientes")
                     .object(null)
                     .status(HttpStatus.NOT_FOUND)
                     .build()
                     , HttpStatus.NOT_FOUND
-            );
+            );*/
         } else{
             return new ResponseEntity<>(Response.builder()
                     .mensaje("")
@@ -145,13 +147,14 @@ public class ClienteController {
     public ResponseEntity<Response> showById(@PathVariable Integer id){
         Cliente cliente = clienteService.findById(id);
         if(cliente == null){
-            return new ResponseEntity<>(Response.builder()
+            throw new ResourceNotFoundException("cliente", "id", id);
+            /*return new ResponseEntity<>(Response.builder()
                     .mensaje("El cliente no existe")
                     .object(null)
                     .status(HttpStatus.NOT_FOUND)
                     .build()
                     , HttpStatus.NOT_FOUND
-            );
+            );*/
         } else{
             ClienteDto clienteDto = ClienteDto.builder()
                     .id(cliente.getId())

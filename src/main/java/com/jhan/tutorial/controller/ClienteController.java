@@ -25,7 +25,7 @@ public class ClienteController {
         List<Cliente> clientes = clienteService.getAll();
 
         if(clientes == null || clientes.isEmpty()){
-            throw new ResourceNotFoundException("Cliente");
+            throw new ResourceNotFoundException("Clientes");
             /*return new ResponseEntity<>(Response.builder()
                     .mensaje("No hay registros de clientes")
                     .object(null)

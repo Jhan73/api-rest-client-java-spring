@@ -74,7 +74,7 @@ public class ClienteController {
     }
     @PutMapping("/cliente/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Response> update(@RequestBody ClienteDto clienteDto, @PathVariable Integer id){//se puede mejorar creando un metodo update en service
+    public ResponseEntity<Response> update(@RequestBody @Valid ClienteDto clienteDto, @PathVariable Integer id){//se puede mejorar creando un metodo update en service
 
         try {
             if (clienteService.existById(id)){
@@ -95,13 +95,14 @@ public class ClienteController {
                         , HttpStatus.OK
                 );
             } else {
-                return new ResponseEntity<>(Response.builder()
+                throw new ResourceNotFoundException("cliente", "id", id);
+                /*return new ResponseEntity<>(Response.builder()
                         .mensaje("El cliente no existe")
                         .object(null)
                         .status(HttpStatus.NOT_FOUND)
                         .build()
                         , HttpStatus.NOT_FOUND
-                );
+                );*/
             }
 
 

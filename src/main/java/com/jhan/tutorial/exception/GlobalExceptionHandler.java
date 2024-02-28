@@ -44,4 +44,12 @@ public class GlobalExceptionHandler {
         ApiResponse apiResponse = new ApiResponse(exception.getMessage(), webRequest.getDescription(false));
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
+
+    //controla los errores de varios tipos y globalizrlo con un error 500
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handlerException(Exception exception,
+                                                        WebRequest webRequest) {
+        ApiResponse apiResponse = new ApiResponse(exception.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

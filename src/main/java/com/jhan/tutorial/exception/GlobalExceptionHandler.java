@@ -12,7 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-//Clase para controlar excepciones globalmente
+//Clase para controlar excepciones globalmente - para dar formato a las respuestas de excepciones al cliente
 @RestControllerAdvice//clase que detectará todos los errores en el controller
 public class GlobalExceptionHandler {
     //controla los errores de los campos
@@ -29,10 +29,19 @@ public class GlobalExceptionHandler {
         ApiResponse apiResponse = new ApiResponse(mapErrors.toString(), webRequest.getDescription(false));
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
+
     //controla los errores not found 404
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse> handlerResourceNotFoundException (ResourceNotFoundException exception, WebRequest webRequest){
         ApiResponse apiResponse = new ApiResponse(exception.getMessage(), webRequest.getDescription(false));
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+
+    //controla los errores de logica o de los catch en general 400
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiResponse> handlerBadRequestException(BadRequestException exception,
+                                                                  WebRequest webRequest) {
+        ApiResponse apiResponse = new ApiResponse(exception.getMessage(), webRequest.getDescription(false));
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 }

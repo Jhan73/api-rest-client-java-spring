@@ -1,5 +1,6 @@
 package com.jhan.tutorial.controller;
 
+import com.jhan.tutorial.exception.BadRequestException;
 import com.jhan.tutorial.exception.ResourceNotFoundException;
 import com.jhan.tutorial.model.dto.ClienteDto;
 import com.jhan.tutorial.model.entity.Cliente;
@@ -64,12 +65,13 @@ public class ClienteController {
                     , HttpStatus.CREATED
                     );
         } catch (DataAccessException e){
-            return new ResponseEntity<>(Response.builder()
+            throw new BadRequestException(e.getMessage());
+            /*return new ResponseEntity<>(Response.builder()
                     .mensaje(e.getMessage())
                     .object(null)
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .build()
-                    , HttpStatus.METHOD_NOT_ALLOWED);
+                    , HttpStatus.METHOD_NOT_ALLOWED);*/
         }
     }
     @PutMapping("/cliente/{id}")
@@ -107,12 +109,13 @@ public class ClienteController {
 
 
         } catch (DataAccessException e){
-            return new ResponseEntity<>(Response.builder()
+            throw new BadRequestException(e.getMessage());
+            /*return new ResponseEntity<>(Response.builder()
                     .mensaje(e.getMessage())
                     .object(null)
                     .status(HttpStatus.METHOD_NOT_ALLOWED)
                     .build()
-                    , HttpStatus.METHOD_NOT_ALLOWED);
+                    , HttpStatus.METHOD_NOT_ALLOWED);*/
         }
     }
     /*@DeleteMapping("/cliente/{id}")//{id} debe coincidir con el nombre del parametro
@@ -136,12 +139,13 @@ public class ClienteController {
                     .build()
                     , HttpStatus.NO_CONTENT);
         } catch (DataAccessException e){
-            return new ResponseEntity<>(Response.builder()
+            throw new BadRequestException(e.getMessage());
+            /*return new ResponseEntity<>(Response.builder()
                     .mensaje(e.getMessage())
                     .object(null)
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build()
-                    , HttpStatus.INTERNAL_SERVER_ERROR);
+                    , HttpStatus.INTERNAL_SERVER_ERROR);*/
         }
     }
     @GetMapping("/cliente/{id}")
